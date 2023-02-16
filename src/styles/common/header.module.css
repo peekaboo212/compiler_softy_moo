@@ -1,0 +1,12 @@
+.header {
+    width: 100vw;
+    height: 10vh;
+    background-color: #222225;
+    grid-template-columns: 1fr 1fr 13fr;
+    color: white;
+    grid-area: header;
+    height:10vh;
+    font-size: 30px;
+    text-align: left;
+    padding: 10px 45px;
+}
