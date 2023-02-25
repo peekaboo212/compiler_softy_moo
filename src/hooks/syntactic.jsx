@@ -1,4 +1,6 @@
 import React from 'react'
+import moo from 'moo'
+
 let linebreak = new RegExp(/\n/)
 let tagEnd = new RegExp(/#/)
 let tagVar = new RegExp(/VAR:/)
@@ -20,8 +22,29 @@ const validateTagsStructure = (code) => {
 }
 
 const validateVariables = (code) => {
+  let lexer = moo.compile({
+    WS: /[ \t]+/,
+    tagStart: /VAR:/,
+    returnLine: /\r/,
+    NL: { match: /\n/, lineBreaks: true },
+    varNum: /NUM(?:\\["\\]|[^\n"\\])*./,
+    varString: /STRING(?:\\["\\]|[^\n"\\])*./,
+    varDecimal: /DECIMAL(?:\\["\\]|[^\n"\\])*./,
+  })
+
   if(tagVar.test(code)){
-    console.log(code)
+    try {
+      lexer.reset(code)
+      let tokens = []
+      for (const token of lexer) {
+        if(token.type == "varNum" || token.type == "varString" || token.type == "varDecimal"){
+          tokens.push(token)
+        }
+      }
+      return(tokens)
+    } catch (e) {
+      return(false)
+    }
   }else {
     return(false)
   }
@@ -31,11 +54,16 @@ export const useSyntactic = (code) => {
   let errors = []
 
   let content = validateTagsStructure(code)
-  if(content == false){
-    console.log('error with tags')
-    return(false)
+  if(content){
+    let variables = validateVariables(content[0])
+    if(variables) {
+      console.log(variables)
+    } else {
+      errors.push('error in var zone')
+    }
   } else {
-    validateVariables(content[0])
+    errors.push('error with tags')
   }
 
+  console.log(errors)
 }
