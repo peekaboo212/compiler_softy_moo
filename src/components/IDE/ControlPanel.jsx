@@ -1,19 +1,24 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined'
 import UploadFileOutlinedIcon from '@mui/icons-material/UploadFileOutlined'
-import { RoundedButton } from '../common/RoundedButton'
 import styles from '../../styles/IDE/IDE.module.css'
+import { useLexer } from '../../hooks/lexer'
+import { useSyntactic } from '../../hooks/syntactic'
 
-export const ControlPanel = ({setText}) => {
+export const ControlPanel = ({text, setText}) => {
 
   const showFile = async (e) => {
     e.preventDefault()
     const reader = new FileReader()
     reader.onload = async (e) => { 
-      const text = (e.target.result)
-      setText({value: text, caret: -1, target: e.target})
+      setText({value: e.target.result, caret: -1, target: e.target})
     };
     reader.readAsText(e.target.files[0])
+  }
+
+  const compiler = () => {
+    let code = useLexer(text.value)
+    useSyntactic(code)
   }
 
   return (
@@ -26,9 +31,10 @@ export const ControlPanel = ({setText}) => {
           </label>
         </div>
         <div>
-          <RoundedButton textButton={'Compile'}>
-              <SettingsOutlinedIcon/>
-          </RoundedButton>
+        <button onClick={compiler}>
+          Compile
+          <SettingsOutlinedIcon/>
+        </button>
         </div>
     </div>
   )

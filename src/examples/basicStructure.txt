@@ -1,0 +1,10 @@
+START
+    VAR:
+    #
+    FUNC:
+    !!Este es un comentario
+    !!otro comentario
+    #
+    BODY:
+    #
+END
