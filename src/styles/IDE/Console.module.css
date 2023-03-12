@@ -1,0 +1,26 @@
+.containerConsole {
+    padding: 15px;
+    overflow-y: scroll;
+    height: 22vh;
+}
+
+.error {
+    color: rgb(255, 143, 143);}
+
+.correct {
+    color: rgb(105, 179, 105);
+}
+
+.containerConsole::-webkit-scrollbar {
+    width: 10px;
+}
+  
+.containerConsole::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0);
+    border-radius: 10px;
+}
+  
+.containerConsole::-webkit-scrollbar-thumb {
+    background: rgb(94, 93, 93);
+    border-radius: 20px;
+}

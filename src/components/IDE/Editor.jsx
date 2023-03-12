@@ -1,6 +1,21 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import styles from '../../styles/IDE/Editor.module.css'
 
-export const Editor = ({text, setText, spaces = 4}) => {
+
+export const Editor = ({text, setText, spaces = 4 }) => {
+
+  const [numLines, setNumLines] = useState(null)
+
+  const div1Ref = useRef(null);
+  const div2Ref = useRef(null);
+
+  const handleDiv1Scroll = () => {
+    div2Ref.current.scrollTop = div1Ref.current.scrollTop;
+  };
+
+  const handleDiv2Scroll = () => {
+    div1Ref.current.scrollTop = div2Ref.current.scrollTop;
+  };
 
   useEffect(() => {
       if(text.caret >= 0){
@@ -18,13 +33,32 @@ export const Editor = ({text, setText, spaces = 4}) => {
     }
   }
 
-  const handleText = (e) => setText({value: e.target.value, caret: -1, target: e.target});
+  const handleText = (e) => setText({value: e.target.value, caret: -1, target: e.target})
+
+  let renderNumLInes = () => numLines.map((line, index) => (<p key={index}>{index+1}</p>))
+  
+
+  useEffect(() => {
+    setNumLines(text.value.split("\n"))
+  }, [text])
+  
+
   return(
-      <textarea
-        onChange  = {handleText}
-        onKeyDown = {handleTab}
-        value     = {text.value}
-        rows="20" cols="100"
-      />
+    <div className={styles.containerEditor}>
+      <div ref={div1Ref} className={styles.containerNumLines} onScroll={handleDiv1Scroll}>
+        {numLines != null ? renderNumLInes() : <></>}
+      </div>
+      <div className={styles.containerCode}>
+        <textarea
+          className={styles.containerTextarea}
+          ref={div2Ref}
+          onScroll={handleDiv2Scroll}
+          onChange  = {handleText}
+          onKeyDown = {handleTab}
+          value     = {text.value}
+          // cols="120"
+        />
+      </div>
+    </div>
   )
 }

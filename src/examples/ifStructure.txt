@@ -1,0 +1,14 @@
+START
+    VAR:
+        NUM username;
+        STRING password;
+        DECIMAL money;
+    #
+    !!otro comentario
+    BODY:
+        SI (username ESIGUAL "sofia")
+            PRINT "correct log in";
+        SINO
+            PRINT "fail log in";
+    #
+END

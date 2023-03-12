@@ -1,24 +1,21 @@
 START
     VAR:
-        NUM username.
-        STRING password.
-        DECIMAL money.
+        NUM username;
+        STRING password;
+        DECIMAL money;
     #
-    FUNC:
-    !!Este es un comentario
-        ACTION logUser (username, password) {
-            SI username ES "sofia" Y password ES "123"
-                PRINT "correct log in".
-            SINO
-                PRINT "fail log in".
-        }
     !!otro comentario
-    #
     BODY:
-        WRITE "Type your username".
-        username = READ.
-        WRITE "Enter your password".
-        password = READ.
-        logUser(username, password).
+        WRITE "Type your username";
+        READ => username;
+        WRITE "Enter your password";
+        READ => password;
+        !!Este es un comentario
+        ACTION logUser (username, password) {
+            SI username ES "sofia"
+                PRINT "correct log in";
+            SINO
+                PRINT "fail log in";
+        }
     #
 END

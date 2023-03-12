@@ -1,0 +1,55 @@
+.containerEditor {
+    display: grid;
+    grid-template-columns: 1fr 24fr;
+    grid-template-rows: 1fr;
+}
+
+.containerNumLines {
+    text-decoration: none;
+    overflow-y: scroll;
+    height: 65vh;
+    line-height: 20px;
+    padding: 5px;
+    text-align: center;
+    color: #706f6f;
+}
+
+.containerNumLines::-webkit-scrollbar {
+    display: none;
+}
+
+.containerCode{
+    height: 65vh;
+}
+
+.containerTextarea {
+    height: 100%;
+    width: 100%;
+    text-decoration: none;
+	font-family: 'Poppins', sans-serif;
+    font-size: 15px;
+    line-height: 20px;
+    padding: 5px;
+    background-color: transparent;
+    border: none;
+    color: #b8b8b8;
+    resize: none;
+}
+
+.containerTextarea:focus {
+    outline: none;
+}
+
+.containerTextarea::-webkit-scrollbar {
+    width: 10px;
+}
+  
+.containerTextarea::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0);
+    border-radius: 10px;
+}
+  
+.containerTextarea::-webkit-scrollbar-thumb {
+    background: rgb(107, 107, 107);
+    border-radius: 20px;
+}

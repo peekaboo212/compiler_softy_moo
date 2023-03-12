@@ -1,16 +1,16 @@
 import React from 'react'
+import moo from 'moo'
 
-let invalidSymbols = new RegExp(/[-\$%'^&_?¿~°¬ñ<>]/gm)
+let error = []
+
+let invalidSymbols = new RegExp(/[-\$%'^&_?¿~°¬ñ<]/gm)
 let comment = new RegExp(/!![\w].*/)
-let linebreak = new RegExp(/\n/)
-let tagStart = new RegExp(/START/)
-let tagEnd = new RegExp(/END/)
+let linebreak = new RegExp(/\n/g)
 
 const validateSymbols = (text) => {
   let invalidCarachters = [...text.matchAll(invalidSymbols)]
-
   if ( invalidCarachters.length > 0) {
-    return(false)
+    return(invalidCarachters)
   }
   return(true)
 }
@@ -29,40 +29,51 @@ const deleteCommentsAndSpaces = (text) => {
 }
 
 const validateStartEnd = (text) => {
-  let error = []
-  let arrayCode = text.split(linebreak)
+  let lexer = moo.compile({
+    WS: /[ \t]+/,
+    tags: /START[\w\s\S]*?\END/,
+    returnLine: /\r/,
+    NL: { match: /\n/, lineBreaks: true },
+  })
 
-  if(tagStart.test(arrayCode[0])){
-    console.log('bien START')
-  } else {
-    error.push("invalid syntax: There isn't tag START")
-  }
-  
-  if(tagEnd.test(arrayCode[arrayCode.length-1])){
-    console.log('bien END')
-  } else {
-    error.push("invalid syntax: There isn't tag END")
-  }
-
-  if(!error.length){
+  try {
+    lexer.reset(text)
+    for (const token of lexer) {
+      // console.log(token)
+    }
     return(true)
-  } else {
-    return(error.join(" "))
+  } catch (e) {
+    // console.log(e)
+    return(false)
   }
 }
 
+const findErrorLine = (txt, positionError, message) => {
+  const contentBeforeError = txt.substr(0, positionError)
+  const lineCodes = [...contentBeforeError.matchAll(linebreak)]
+  const saveError = `${message} at line ${lineCodes.length+1}`
+  error.push(saveError)
+}
+
 export const useLexer = (text) => {
+  error = []
   let symbols = validateSymbols(text)
   let formattedCode = deleteCommentsAndSpaces(text)
   let tagsStartEnd = validateStartEnd(formattedCode)
-  let errors = []
 
   if(symbols != true){
-    errors.push("invalid syntax: There are invalid symbols")
+    symbols.map(error => {
+      findErrorLine(text, error.index, "Invalid syntax: There are invalid symbols")
+    })
   }
   if(tagsStartEnd != true){
-    errors.push(tagsStartEnd)
+    error.push("Invalid syntax: Missing tags START/END")
   }
-  console.log(errors)
-  return(formattedCode)
+
+  let resultsOfLexer = {
+    content: formattedCode,
+    errors: error
+  }
+
+  return(resultsOfLexer)
 }

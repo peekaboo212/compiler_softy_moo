@@ -1,3 +1,14 @@
-/* .fileInput {
-    display: none
-} */
+.content {
+    width: 100vw;
+    height: 90vh;
+    display: grid;
+    grid-template-columns: 1fr 5fr;
+}
+
+.mainContainer {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 3fr 1fr;
+    background-image: radial-gradient(circle at 50% 18.01%, #3a4140 0, #363a39 25%, #323232 50%, #2e2a2b 75%, #292425 100%);
+
+}
