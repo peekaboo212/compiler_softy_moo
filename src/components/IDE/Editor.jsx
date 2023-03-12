@@ -50,6 +50,7 @@ export const Editor = ({text, setText, spaces = 4 }) => {
       </div>
       <div className={styles.containerCode}>
         <textarea
+          spellCheck={false}
           className={styles.containerTextarea}
           ref={div2Ref}
           onScroll={handleDiv2Scroll}

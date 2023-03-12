@@ -27,7 +27,8 @@ export const ControlPanel = ({text, setText, setErrors, setCompiled}) => {
   }
 
   const recharge = () => {
-    window.location.reload()
+    setCompiled(false)
+    setText({value: "", caret: -1, target: ""})
   }
 
   return (
