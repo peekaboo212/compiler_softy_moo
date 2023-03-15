@@ -3,11 +3,20 @@ import moo from 'moo'
 
 let error = []
 
-const findErrorLine = (txt, tokenError, message) => {
+const findErrorLine = (txt, tokenError, message, errorLine) => {
+  console.log(errorLine)
   const errorWord = tokenError.split(" ")
   const positionOfError = txt.indexOf(errorWord[0])
   const line = txt.substr(0, positionOfError).split("\n").length
-  error.push(message + (line))
+  error.push(message + line)
+  return(line)
+}
+
+const skipError = (txt, errorLine) => {
+  let linesOfCode = txt.split("\n")
+  let restLinesOfCode = linesOfCode.slice(errorLine)
+  let codeWithoutError = restLinesOfCode.join("\n")
+  return(codeWithoutError)
 }
 
 const validateTagsStructure = (code, txt) => {
@@ -35,7 +44,7 @@ const validateTagsStructure = (code, txt) => {
       tokens.push(token)
     }
     if(token.type == "myError"){
-      findErrorLine(txt, token.text, "Error at tag on line: ")
+      findErrorLine(txt, token.text, "Error at tag on line: ", 0)
       response.state = false
     }
   }
@@ -76,7 +85,7 @@ const validateVariables = (code, txt) => {
       variables.push(token)
     }
     if(token.type == "myError"){
-      findErrorLine(txt, token.text, "Error declaring variables at line: ")
+      findErrorLine(txt, token.text, "Error declaring variables at line: ", 0)
       response.state = false
     }
   }
@@ -85,13 +94,14 @@ const validateVariables = (code, txt) => {
   return(response)
 }
 
-const validateBody = (code, txt) => {
+const validateBody = (code, txt, line) => {
   
   let lexer = moo.compile({
     WS: /[ \t]+/,
     tagBody: /BODY:/,
     returnLine: /\r/,
     NL: { match: /\n/, lineBreaks: true },
+    comment: /!![\w].*/,
     function: /ACTION (?:[\w ]*)/,
     arguments: /[(](?:(?:[\w]*)*[ ,]*)*[)]/,
     content: /\{[\w\s\S]*?\}/,
@@ -99,6 +109,8 @@ const validateBody = (code, txt) => {
     print: /PRINT\s*"[^"]*";/,
     read: /READ\s*=>\s*\w+;/,
     tagEnd: /#/,
+    finBodyZone: /}/,
+    end: /END/,
     tagElse: /SINO/,
     compa: /(?:(?:SI\s"?\w+"?\s+(?:ES|NOES|MAYORQ|MAENORQ)\s+"?\w+"?))/,
     myError: moo.error,
@@ -107,6 +119,8 @@ const validateBody = (code, txt) => {
   let response = {
     state: true
   }
+
+  // console.log(code[9])
 
   lexer.reset(code)
   for (const token of lexer) {
@@ -117,7 +131,10 @@ const validateBody = (code, txt) => {
       validateBody(newContent)
     }
     if(token.type == "myError"){
-      findErrorLine(txt, token.text, "Sintax error at line: ")
+      let errorLine = findErrorLine(txt, token.text, "Sintax error at line: ", line)
+      let restOfCode = skipError(txt, errorLine)
+      // console.log("------------Error en linea: " + errorLine)
+      validateBody(restOfCode, txt, errorLine)
       response.state = false
     }
   }
@@ -129,7 +146,7 @@ export const useSyntactic = (code, txt) => {
 
   if(estructureTags.state == true){
     let declarationOfVariables = validateVariables(estructureTags.content[0].value, txt)
-    validateBody(estructureTags.content[1].value, txt)
+    validateBody(estructureTags.content[1].value, txt, 0)
   }
 
   return(error)
