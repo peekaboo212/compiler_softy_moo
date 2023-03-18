@@ -4,7 +4,7 @@ import moo from 'moo'
 let error = []
 
 const findErrorLine = (txt, tokenError, message, errorLine) => {
-  console.log(errorLine)
+  // console.log(errorLine)
   const errorWord = tokenError.split(" ")
   const positionOfError = txt.indexOf(errorWord[0])
   const line = txt.substr(0, positionOfError).split("\n").length
@@ -17,6 +17,16 @@ const skipError = (txt, errorLine) => {
   let restLinesOfCode = linesOfCode.slice(errorLine)
   let codeWithoutError = restLinesOfCode.join("\n")
   return(codeWithoutError)
+}
+
+const validateVariable = (lineCode) => {
+  let lexer = moo.compile({
+    WS: /[ \t]+/,
+    
+    myError: moo.error,
+  })
+
+
 }
 
 const validateTagsStructure = (code, txt) => {
@@ -136,6 +146,10 @@ const validateBody = (code, txt, line) => {
       // console.log("------------Error en linea: " + errorLine)
       validateBody(restOfCode, txt, errorLine)
       response.state = false
+    }
+
+    if(token.type == "write" || token.type == "print" || token.type == "read"){
+
     }
   }
 }
